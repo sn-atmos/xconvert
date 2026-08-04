@@ -7,7 +7,7 @@
     "paths": {},
     "components": {
         "schemas": {
-            "NetworkingStack": {
+            "io.crossplane.example.v1.NetworkingStack": {
                 "type": "object",
                 "properties": {
                     "apiVersion": {
@@ -72,7 +72,14 @@
                             }
                         }
                     }
-                }
+                },
+                "x-kubernetes-group-version-kind": [
+                    {
+                        "group": "example.crossplane.io",
+                        "kind": "NetworkingStack",
+                        "version": "v1"
+                    }
+                ]
             }
         }
     }
