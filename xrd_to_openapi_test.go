@@ -38,9 +38,23 @@ func TestConvertBasicXRD(t *testing.T) {
 		t.Fatalf("expected OpenAPI version %q, got %q", xconvert.OpenAPIVersion, generated.Version)
 	}
 
-	schema, ok := generated.Components.Schemas["NetworkingStack"]
+	schema, ok := generated.Components.Schemas["io.crossplane.example.v1.NetworkingStack"]
 	if !ok {
-		t.Fatal("expected NetworkingStack schema")
+		t.Fatal("expected io.crossplane.example.v1.NetworkingStack schema")
+	}
+
+	gvk, ok := schema.Extensions["x-kubernetes-group-version-kind"].([]interface{})
+	if !ok || len(gvk) != 1 {
+		t.Fatalf("expected x-kubernetes-group-version-kind extension, got %#v", schema.Extensions["x-kubernetes-group-version-kind"])
+	}
+
+	gvkEntry, ok := gvk[0].(map[string]interface{})
+	if !ok {
+		t.Fatalf("expected GVK extension entry to be an object, got %#v", gvk[0])
+	}
+
+	if gvkEntry["group"] != "example.crossplane.io" || gvkEntry["version"] != "v1" || gvkEntry["kind"] != "NetworkingStack" {
+		t.Fatalf("unexpected GVK extension: %#v", gvkEntry)
 	}
 
 	metadata, ok := schema.Properties["metadata"]
@@ -60,6 +74,7 @@ func TestConvertBasicXRD(t *testing.T) {
 
 func TestConvertAllowsOmittedSchema(t *testing.T) {
 	xrd := &apiextv2.CompositeResourceDefinition{}
+	xrd.Spec.Group = "example.crossplane.io"
 	xrd.Spec.Names.Kind = "Minimal"
 	xrd.Spec.Versions = []apiextv2.CompositeResourceDefinitionVersion{
 		{
@@ -74,9 +89,9 @@ func TestConvertAllowsOmittedSchema(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	schema := generated.Components.Schemas["Minimal"]
+	schema := generated.Components.Schemas["io.crossplane.example.v1.Minimal"]
 	if schema == nil {
-		t.Fatal("expected Minimal schema")
+		t.Fatal("expected io.crossplane.example.v1.Minimal schema")
 	}
 
 	if !schema.Type.Contains("object") {

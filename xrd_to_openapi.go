@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"strings"
 
 	apiextv2 "github.com/crossplane/crossplane/apis/v2/apiextensions/v2"
 
@@ -60,6 +61,17 @@ func XRDToOpenAPI(xrd *apiextv2.CompositeResourceDefinition) (*spec3.OpenAPI, er
 	schema.Properties["apiVersion"] = stringSchema()
 	schema.Properties["kind"] = stringSchema()
 	schema.Properties["metadata"] = objectMetaSchema()
+	schema.Extensions = spec.Extensions{
+		"x-kubernetes-group-version-kind": []map[string]string{
+			{
+				"group":   xrd.Spec.Group,
+				"version": version.Name,
+				"kind":    xrd.Spec.Names.Kind,
+			},
+		},
+	}
+
+	schemaName := openAPISchemaName(xrd.Spec.Group, version.Name, xrd.Spec.Names.Kind)
 
 	return &spec3.OpenAPI{
 		Version: OpenAPIVersion,
@@ -74,10 +86,20 @@ func XRDToOpenAPI(xrd *apiextv2.CompositeResourceDefinition) (*spec3.OpenAPI, er
 		},
 		Components: &spec3.Components{
 			Schemas: map[string]*spec.Schema{
-				xrd.Spec.Names.Kind: schema,
+				schemaName: schema,
 			},
 		},
 	}, nil
+}
+
+func openAPISchemaName(group, version, kind string) string {
+	parts := strings.Split(group, ".")
+	for i := 0; i < len(parts)/2; i++ {
+		parts[i], parts[len(parts)-1-i] = parts[len(parts)-1-i], parts[i]
+	}
+
+	parts = append(parts, version, kind)
+	return strings.Join(parts, ".")
 }
 
 func objectMetaSchema() spec.Schema {
