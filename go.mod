@@ -1,4 +1,4 @@
-module github.com/nkzk/xconvert
+module github.com/sn-atmos/xconvert
 
 go 1.26.5
 

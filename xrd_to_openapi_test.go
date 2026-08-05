@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/nkzk/xconvert"
+	"github.com/sn-atmos/xconvert"
 
 	apiextv2 "github.com/crossplane/crossplane/apis/v2/apiextensions/v2"
 	"k8s.io/apimachinery/pkg/util/yaml"
