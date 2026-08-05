@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/sn-atmos/xconvert/compare/v0.1.1...v0.1.2) (2026-08-05)
+
+
+### Bug Fixes
+
+* move repo to sn-atmos/xconvert ([#4](https://github.com/sn-atmos/xconvert/issues/4)) ([0ffb248](https://github.com/sn-atmos/xconvert/commit/0ffb248a4a451291f86918faec7dc216a1cf1ac3))
+
 ## [0.1.1](https://github.com/nkzk/xconvert/compare/v0.1.0...v0.1.1) (2026-08-04)
 
 
