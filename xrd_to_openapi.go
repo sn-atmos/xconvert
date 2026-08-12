@@ -43,7 +43,7 @@ func LoadXRD(data []byte) ([]*apiextv2.CompositeResourceDefinition, error) {
 
 // Converts a slice of XRDs to a slice of spec3.OpenAPI.
 // Groups documents by the defined api-group/version cause crossplane will only select 1 openapi document based on that.
-// ref https://github.com/crossplane/crossplane/blob/main/internal/xfn/required_schemas.go#L87
+// ref https://github.com/crossplane/crossplane/blob/2d040d2daf4e001799c4154a4a09b9e1f40d7fde/internal/xfn/required_schemas.go#L87
 func XRDsToOpenAPI(xrds []*apiextv2.CompositeResourceDefinition) ([]spec3.OpenAPI, error) {
 	result := map[schema.GroupVersion]spec3.OpenAPI{}
 
