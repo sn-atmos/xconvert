@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/sn-atmos/xconvert/compare/v0.1.2...v0.1.3) (2026-08-12)
+
+
+### Bug Fixes
+
+* group documents by groupversion ([#6](https://github.com/sn-atmos/xconvert/issues/6)) ([a6f85df](https://github.com/sn-atmos/xconvert/commit/a6f85df05f6fb5e67faad3b12649cda76283ad43))
+
 ## [0.1.2](https://github.com/sn-atmos/xconvert/compare/v0.1.1...v0.1.2) (2026-08-05)
 
 
