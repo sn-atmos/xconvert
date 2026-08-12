@@ -43,8 +43,8 @@ func LoadXRD(data []byte) ([]*apiextv2.CompositeResourceDefinition, error) {
 
 // Converts a slice of XRDs to a slice of spec3.OpenAPI.
 // Groups documents by the defined api-group.
-func XRDsToOpenAPI(xrds []*apiextv2.CompositeResourceDefinition) ([]*spec3.OpenAPI, error) {
-	result := map[schema.GroupVersionKind]*spec3.OpenAPI{}
+func XRDsToOpenAPI(xrds []*apiextv2.CompositeResourceDefinition) ([]spec3.OpenAPI, error) {
+	result := map[schema.GroupVersionKind]spec3.OpenAPI{}
 
 	for _, xrd := range xrds {
 		doc, err := XRDToOpenAPI(xrd)
@@ -56,7 +56,7 @@ func XRDsToOpenAPI(xrds []*apiextv2.CompositeResourceDefinition) ([]*spec3.OpenA
 		for _, gvk := range gvks {
 			_, ok := result[gvk]
 			if !ok {
-				result[gvk] = doc
+				result[gvk] = *doc
 			}
 		}
 	}
