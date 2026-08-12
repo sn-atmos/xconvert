@@ -88,8 +88,8 @@ func TestConvertBasicXRDs(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(generated) != 2 {
-		t.Fatalf("expected 2 OpenAPI documents, got %d", len(generated))
+	if len(generated) != 1 {
+		t.Fatalf("expected 1 OpenAPI document, got %d", len(generated))
 	}
 
 	schemas := map[string]*spec.Schema{}

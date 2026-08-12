@@ -42,9 +42,10 @@ func LoadXRD(data []byte) ([]*apiextv2.CompositeResourceDefinition, error) {
 }
 
 // Converts a slice of XRDs to a slice of spec3.OpenAPI.
-// Groups documents by the defined api-group.
+// Groups documents by the defined api-group/version cause crossplane will only select 1 openapi document based on that.
+// ref https://github.com/crossplane/crossplane/blob/main/internal/xfn/required_schemas.go#L87
 func XRDsToOpenAPI(xrds []*apiextv2.CompositeResourceDefinition) ([]spec3.OpenAPI, error) {
-	result := map[schema.GroupVersionKind]spec3.OpenAPI{}
+	result := map[schema.GroupVersion]spec3.OpenAPI{}
 
 	for _, xrd := range xrds {
 		doc, err := XRDToOpenAPI(xrd)
@@ -52,29 +53,18 @@ func XRDsToOpenAPI(xrds []*apiextv2.CompositeResourceDefinition) ([]spec3.OpenAP
 			return nil, fmt.Errorf("failed to convert xrd %q to openapi schema: %v", xrd.Spec.Names.Kind, err)
 		}
 
-		gvks := definedGVK(xrd)
-		for _, gvk := range gvks {
-			_, ok := result[gvk]
-			if !ok {
-				result[gvk] = *doc
-			}
+		gv := schema.GroupVersion{Group: xrd.Spec.Group, Version: xrd.Spec.Versions[0].Name}
+		existing, ok := result[gv]
+		if !ok {
+			result[gv] = *doc
+			continue
 		}
+
+		maps.Copy(existing.Components.Schemas, doc.Components.Schemas)
+		result[gv] = existing
 	}
 
 	return slices.Collect(maps.Values(result)), nil
-}
-
-func definedGVK(xrd *apiextv2.CompositeResourceDefinition) []schema.GroupVersionKind {
-	result := []schema.GroupVersionKind{}
-	for _, version := range xrd.Spec.Versions {
-		result = append(result, schema.GroupVersionKind{
-			Group:   xrd.Spec.Group,
-			Version: version.Name,
-			Kind:    xrd.Spec.Names.Kind,
-		})
-	}
-
-	return result
 }
 
 // Converts an XRD to spec3.OpenAPI, adding kubernetes metadata, apiversion, and kind to the schema.

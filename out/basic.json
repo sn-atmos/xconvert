@@ -81,19 +81,7 @@
                             "version": "v1"
                         }
                     ]
-                }
-            }
-        }
-    },
-    {
-        "openapi": "3.0.0",
-        "info": {
-            "title": "SomethingElse",
-            "version": "v1"
-        },
-        "paths": {},
-        "components": {
-            "schemas": {
+                },
                 "io.crossplane.example.v1.SomethingElse": {
                     "type": "object",
                     "properties": {
