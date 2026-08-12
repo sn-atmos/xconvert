@@ -50,7 +50,7 @@ func XRDsToOpenAPI(xrds []*apiextv2.CompositeResourceDefinition) ([]spec3.OpenAP
 	for _, xrd := range xrds {
 		doc, err := XRDToOpenAPI(xrd)
 		if err != nil {
-			return nil, fmt.Errorf("failed to convert xrd %q to openapi schema: %v", xrd.Spec.Names.Kind, err)
+			return nil, fmt.Errorf("failed to convert xrd %q to openapi schema: %w", xrd.Spec.Names.Kind, err)
 		}
 
 		gv := schema.GroupVersion{Group: xrd.Spec.Group, Version: xrd.Spec.Versions[0].Name}
