@@ -1,15 +1,11 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"log"
 	"os"
 
 	"github.com/sn-atmos/xconvert"
-
-	apiextv2 "github.com/crossplane/crossplane/apis/v2/apiextensions/v2"
-	"k8s.io/apimachinery/pkg/util/yaml"
 )
 
 func main() {
@@ -18,17 +14,17 @@ func main() {
 		log.Fatal(err)
 	}
 
-	xrd := &apiextv2.CompositeResourceDefinition{}
-	if err := yaml.NewYAMLToJSONDecoder(bytes.NewReader(data)).Decode(xrd); err != nil {
-		log.Fatal(err)
-	}
-
-	doc, err := xconvert.XRDToOpenAPI(xrd)
+	xrds, err := xconvert.LoadXRD(data)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	out, err := json.MarshalIndent(doc, "", "    ")
+	docs, err := xconvert.XRDsToOpenAPI(xrds)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	out, err := json.MarshalIndent(docs, "", "    ")
 	if err != nil {
 		log.Fatal(err)
 	}
