@@ -11,6 +11,7 @@ import (
 	apiextv2 "github.com/crossplane/crossplane/apis/v2/apiextensions/v2"
 	"k8s.io/apimachinery/pkg/util/yaml"
 	"k8s.io/kube-openapi/pkg/spec3"
+	"k8s.io/kube-openapi/pkg/validation/spec"
 )
 
 //go:embed xrds/basic.yaml
@@ -69,6 +70,41 @@ func TestConvertBasicXRD(t *testing.T) {
 	labels := metadata.Properties["labels"].AdditionalProperties
 	if labels == nil || labels.Schema == nil || !labels.Schema.Type.Contains("string") {
 		t.Fatal("expected metadata.labels to be a string map")
+	}
+}
+
+func TestConvertBasicXRDs(t *testing.T) {
+	xrds, err := xconvert.LoadXRD(basicXRD)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(xrds) != 2 {
+		t.Fatalf("expected 2 XRDs, got %d", len(xrds))
+	}
+
+	generated, err := xconvert.XRDsToOpenAPI(xrds)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(generated) != 2 {
+		t.Fatalf("expected 2 OpenAPI documents, got %d", len(generated))
+	}
+
+	schemas := map[string]*spec.Schema{}
+	for _, doc := range generated {
+		for name, schema := range doc.Components.Schemas {
+			schemas[name] = schema
+		}
+	}
+
+	if schemas["io.crossplane.example.v1.NetworkingStack"] == nil {
+		t.Fatal("expected io.crossplane.example.v1.NetworkingStack schema")
+	}
+
+	if schemas["io.crossplane.example.v1.SomethingElse"] == nil {
+		t.Fatal("expected io.crossplane.example.v1.SomethingElse schema")
 	}
 }
 
